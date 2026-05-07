@@ -9,7 +9,7 @@ func (c *Conn) WriteTo(data []byte, addr net.Addr) uint32 {
 
 	var chunks [][]byte
 
-	for i := 0; i <= len(data); i += 1400 {
+	for i := 0; i < len(data); i += 1400 {
 		if len(data)-i <= 1400 {
 			chunks = append(chunks, data[i:])
 			break
@@ -53,7 +53,7 @@ func (c *Conn) WriteTo(data []byte, addr net.Addr) uint32 {
 					// just continue
 				}
 
-			case <-time.After(100<<attempt * time.Millisecond):// 1 attempt timeout 100ms, 2 attempt timeout 200ms, 3 attempt timeout 300ms ...
+			case <-time.After(time.Duration(100<<attempt) * time.Millisecond):// 1 attempt timeout 100ms, 2 attempt timeout 200ms, 3 attempt timeout 300ms ...
 				if attempt == 6 {
 					lostbytes += uint32(len(packets[i].Data)) // count of lost bytes
 					i++
