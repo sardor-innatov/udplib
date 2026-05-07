@@ -4,7 +4,7 @@ import "net"
 
 type Conn struct {
 	conn   net.PacketConn
-	addr   net.Addr
+	Addr   net.Addr
 	ackCh  chan Packet
 	dataCh chan Packet
 	seq    uint32
@@ -21,7 +21,7 @@ func ListenOn(port string) (*Conn, error) {
 
 	c := &Conn{
 		conn:   conn,
-		addr:   nil,
+		Addr:   nil,
 		ackCh:  make(chan Packet, 10),
 		dataCh: make(chan Packet, 10),
 		seq:    0,
@@ -46,7 +46,7 @@ func Dial(address string) (*Conn, error) {
 
 	c := &Conn{
 		conn:   conn,
-		addr:   target,
+		Addr:   target,
 		ackCh:  make(chan Packet, 10),
 		dataCh: make(chan Packet, 10),
 		seq:    0,
