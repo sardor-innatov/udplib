@@ -38,13 +38,35 @@ func (c *Conn) Read() ([]byte, error) {
 	for packet := range c.dataCh {
 
 		if !packet.Valid() {
+
 			nack := Packet{
 				IsNack: true,
 				Ack:    packet.Seq, // tell sender which seq was corrupted
 			}
+
 			buf := serialize(nack)
-			c.conn.WriteTo(buf, packet.Addr)
+			
+			_, err := c.conn.WriteTo(buf, packet.Addr)
+			{
+				if err != nil {
+					return nil, err
+				}
+			}
 			continue
+		}
+
+		ack := Packet{
+			IsAck: true,
+			Ack:   packet.Seq + 1, // tell sender which to send next
+		}
+
+		buf := serialize(ack)
+
+		_, err := c.conn.WriteTo(buf, packet.Addr)
+		{
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		assembler.add(packet)
